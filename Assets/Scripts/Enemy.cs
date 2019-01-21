@@ -108,6 +108,34 @@ public class Enemy : MonoBehaviour {
         healthText.text = "";
     }
 
+    public void OnTriggerEnter(Collider collider)
+    {
+        //if (collider.name == "FireSpell")
+        //{
+        //    //if (resistType == ResistanceTypes.Fire)
+        //    //{
+        //    //    player.DoDamage(25);
+        //    //    Debug.Log("Collision Fire");
+        //    //}
+        //    //if (resistType == ResistanceTypes.Ice)
+        //    //{
+        //    //    player.DoDamage(25);
+        //    //    Debug.Log("Collision Ice");
+        //    //}
+        //    //if (resistType == ResistanceTypes.Lighting)
+        //    //{
+        //    //    player.DoDamage(25);
+        //    //    Debug.Log("Collision Lighting");
+        //    //}
+        //    //if (resistType == ResistanceTypes.Unknown)
+        //    //{
+        //    //    player.DoDamage(25);
+        //    //    Debug.Log("Collision Unknown");
+        //    //}
+
+        //}
+
+    }
 
     public void EnemyDoDamage()
     {
@@ -153,9 +181,9 @@ public class Enemy : MonoBehaviour {
 
     IEnumerator EnemyShooting()
     {
-        //enemyShootPoint = GameObject.Find("EnemyShootPoint");
-        //Instantiate(enemySpellBullet, enemyShootPoint.transform.position, enemyShootPoint.transform.rotation);
-        //alreadyShot = true;
+        enemyShootPoint = GameObject.Find("EnemyShootPoint");
+        Instantiate(enemySpellBullet, enemyShootPoint.transform.position, enemyShootPoint.transform.rotation);
+        alreadyShot = true;
        Debug.Log("Enemy had shot");                  
        yield return new WaitForSeconds(3);
         alreadyShot = false;

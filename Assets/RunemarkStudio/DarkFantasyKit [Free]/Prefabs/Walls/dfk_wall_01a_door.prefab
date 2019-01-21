@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 64625907299241748}
   m_Layer: 0
   m_Name: dfk_wall_01a_door
-  m_TagString: Portals
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
