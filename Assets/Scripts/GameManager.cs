@@ -10,9 +10,7 @@ public class GameManager : MonoBehaviour {
     private GameObject enemySpawned;
 
     private GameObject player;
-  
-    public GameObject portal;
-    
+    private GameObject portal;
 
     private bool alreadySpawned = true;
     private bool waveCleared = true;
@@ -47,8 +45,7 @@ public class GameManager : MonoBehaviour {
         enemy = Resources.Load("Prefabs/Enemy") as GameObject;
         enemyBoss = Resources.Load("Prefabs/EnemyBoss") as GameObject;
         player = GameObject.Find("Player");
-        portal = GameObject.FindGameObjectWithTag("Portals") ;
-        
+        portal = GameObject.Find("Portal");
         hazardLeft = hazardCount;
         StartCoroutine(NextWaveAnnouncer());
         //StartCoroutine(Spawn());      
@@ -152,7 +149,7 @@ public class GameManager : MonoBehaviour {
                 //Vector3 spawnPosition = new Vector3(portal.transform.position.x, portal.transform.position.y, portal.transform.position.z-3);
                 Vector3 spawnPosition = new Vector3(37,3,15);
                 Quaternion spawnRotation = Quaternion.identity;
-                enemySpawned=Instantiate(enemy, portal.transform.position, enemy.transform.rotation);
+                enemySpawned=Instantiate(enemy, portal.transform.position, spawnRotation);
                 hazardLeft -= 1;
                 //Debug.Log("LEFT: " + hazardLeft);
                 yield return new WaitForSeconds(spawnWait);
