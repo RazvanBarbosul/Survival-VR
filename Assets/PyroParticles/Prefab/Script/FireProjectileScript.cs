@@ -59,6 +59,7 @@ namespace DigitalRuby.PyroParticles
             ProjectileColliderObject.GetComponent<Rigidbody>().velocity = dir;
         }
 
+
         protected override void Start()
         {
             base.Start();
@@ -76,6 +77,11 @@ namespace DigitalRuby.PyroParticles
 
             // stop the projectile
             collided = true;
+            if(c.gameObject.tag == "Enemy")
+            {
+                //c.gameObject.GetComponent<Enemy>().resistType
+              Destroy(c.gameObject);
+            }
             Stop();
 
             // destroy particle systems after a slight delay

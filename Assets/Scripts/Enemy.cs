@@ -23,6 +23,8 @@ public class Enemy : MonoBehaviour {
     private float moveSpeed = 3;
     private float minDistance;
 
+    [SerializeField]
+    private Light Spotligt;
     private Animator anim;
 
     public GameObject enemySpellBullet;
@@ -65,18 +67,22 @@ public class Enemy : MonoBehaviour {
 
         if (resistType == ResistanceTypes.Fire)
         {
+            Spotligt.color = Color.red;
             Debug.Log("Resistance: " + resistType);       
         }
         if (resistType == ResistanceTypes.Ice)
         {
+            Spotligt.color = Color.cyan;
             Debug.Log("Resistance: " + resistType);
         }
         if (resistType == ResistanceTypes.Lighting)
         {
+            Spotligt.color = Color.magenta;
             Debug.Log("Resistance: " + resistType);
         }
         if (resistType == ResistanceTypes.Water)
         {
+            Spotligt.color = Color.blue;
             Debug.Log("Resistance: " + resistType);
         }
     }

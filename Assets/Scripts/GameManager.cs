@@ -5,11 +5,16 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
+    [SerializeField]
     private GameObject enemy;
+    [SerializeField]
     private GameObject enemyBoss;
+    [SerializeField]
+    private GameObject[] portals;
     private GameObject enemySpawned;
 
     private GameObject player;
+    [SerializeField]
     private GameObject portal;
 
     private bool alreadySpawned = true;
@@ -42,10 +47,13 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        enemy = Resources.Load("Prefabs/Enemy") as GameObject;
-        enemyBoss = Resources.Load("Prefabs/EnemyBoss") as GameObject;
+        //enemy = Resources.Load("Prefabs/Enemy") as GameObject;
+        //enemyBoss = Resources.Load("Prefabs/EnemyBoss") as GameObject;
         player = GameObject.Find("Player");
-        portal = GameObject.Find("Portal");
+        Debug.Log("Portals:" + portals.Length);
+        int RandomPortal = Random.Range(0, portals.Length);
+        // portal = GameObject.Find("Portal");
+        portal = portals[RandomPortal];
         hazardLeft = hazardCount;
         StartCoroutine(NextWaveAnnouncer());
         //StartCoroutine(Spawn());      
@@ -58,6 +66,7 @@ public class GameManager : MonoBehaviour {
         {
             StartCoroutine(NextWaveAnnouncer());
         }
+        NextWaveCheck();
     }
 
     public void NextWaveCheck()
