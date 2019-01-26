@@ -9,16 +9,31 @@ public class PlayerMovementKB : MonoBehaviour {
     public float jumpSpeed = 8f;
     public float gravity = 2f;
     private Vector3 moveDirection = Vector3.zero;
+
+    private CharacterController playerController;
     
     // Use this for initialization
     void Start () {
-		
+        playerController = GetComponent<CharacterController>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        Controller();
+        PlayerMovement();
+        // Controller();
 
+    }
+
+    //use this function to test movement with the controller
+    private void PlayerMovement()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        Vector3 direction = new Vector3(horizontal, 0, vertical);
+        Vector3 velocity = direction * speed;
+        velocity = Camera.main.transform.TransformDirection(velocity);
+        velocity.y -= gravity;
+        playerController.Move(velocity * Time.deltaTime);
     }
 
     private void Controller()
