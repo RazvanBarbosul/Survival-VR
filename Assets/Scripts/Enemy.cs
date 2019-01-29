@@ -27,22 +27,25 @@ public class Enemy : MonoBehaviour {
     private Light Spotligt;
     private Animator anim;
 
-    public GameObject enemySpellBullet;
-    public GameObject enemyShootPoint;
-
 
     public ResistanceTypes resistType;
 
     private Player player;
     public Transform playerTransform;
-    private CharacterController cr;
+
     private GameManager gameManager;
 
     private TextMesh healthText;
 
+    //private Rigidbody rb;
+
+    private CapsuleCollider bc;
+
+    private Spells spells;
+
     // Use this for initialization
     void Start() {
-        cr = GetComponent<CharacterController>();
+
         anim = gameObject.GetComponent<Animator>();
   
         player = GameObject.Find("Player").GetComponent<Player>();
@@ -50,16 +53,27 @@ public class Enemy : MonoBehaviour {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         resistType = (ResistanceTypes)Random.Range(0, System.Enum.GetValues(typeof(ResistanceTypes)).Length);
         healthText = GameObject.Find("HealthText").GetComponent<TextMesh>();
-        enemySpellBullet = Resources.Load("Prefabs/EnemySpellBullet") as GameObject;
+
         GetResistanceType();
         Stats();
+        bc = this.gameObject.GetComponent<CapsuleCollider>();
+        //rb = GetComponent<Rigidbody>();
         //StartCoroutine(EnemyShooting(5));
     }
 
     // Update is called once per frame
     void Update() {
          EnemyMoving();
-        
+        IntensityColor();
+
+
+    }
+
+    private void IntensityColor()
+    {
+        float phi = Time.time / 1.0f * 2 * Mathf.PI;
+        float amplitude = Mathf.Cos(phi) * 10f + 10f;
+        Spotligt.intensity = amplitude;
     }
 
     public void GetResistanceType()
@@ -72,7 +86,7 @@ public class Enemy : MonoBehaviour {
         }
         if (resistType == ResistanceTypes.Ice)
         {
-            Spotligt.color = Color.cyan;
+            Spotligt.color = Color.white;
             Debug.Log("Resistance: " + resistType);
         }
         if (resistType == ResistanceTypes.Lighting)
@@ -95,7 +109,7 @@ public class Enemy : MonoBehaviour {
 
     public void EnemyGetDamage(int dmg)
     {
-
+       // rb.AddForce(Vector3.back, ForceMode.Impulse);
         health -= dmg;
         if (health <= 0)
         {
@@ -116,7 +130,31 @@ public class Enemy : MonoBehaviour {
 
     public void OnTriggerEnter(Collider collider)
     {
-        //if (collider.name == "FireSpell")
+        if (collider.name == "FireSpell1(Clone)" && resistType == ResistanceTypes.Fire)
+        {
+
+            int random = Random.Range(5, 10);
+            EnemyGetDamage(random);
+        }
+        if (collider.name == "IceSpell1(Clone)" && resistType == ResistanceTypes.Ice)
+        {
+      
+            int random = Random.Range(5, 10);
+            EnemyGetDamage(random);
+        }
+        if (collider.name == "LigthingSpell1(Clone)" && resistType == ResistanceTypes.Lighting)
+        {
+
+            int random = Random.Range(5, 10);
+            EnemyGetDamage(random);
+        }
+        if (collider.name == "WaterSpell1(Clone)" && resistType == ResistanceTypes.Water)
+        {
+
+            int random = Random.Range(5, 10);
+            EnemyGetDamage(random);
+        }
+
         //{
         //    //if (resistType == ResistanceTypes.Fire)
         //    //{
@@ -139,7 +177,7 @@ public class Enemy : MonoBehaviour {
         //    //    Debug.Log("Collision Unknown");
         //    //}
 
-        //}
+        
 
     }
 
@@ -152,15 +190,15 @@ public class Enemy : MonoBehaviour {
 
     public void EnemyMoving()
     {
-        //transform.LookAt(playerTransform);
+        transform.LookAt(playerTransform);
 
-        //transform.position += transform.position * moveSpeed * Time.deltaTime;
+        transform.position = new Vector3(transform.position.x, 0, transform.position.z);
         minDistance = Vector3.Distance(transform.position, playerTransform.position);
         if (minDistance > 4)
         {
             anim.SetBool("isAttacking", false);
             anim.SetBool("isRunning", true);
-            transform.position = Vector3.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);           
         }
 
         else
@@ -168,7 +206,7 @@ public class Enemy : MonoBehaviour {
             anim.SetBool("isRunning", false);
             anim.SetBool("isAttacking", true);
             if(alreadyShot==false)
-            StartCoroutine(EnemyShooting());
+               StartCoroutine(EnemyShooting());
         }
             
     }
@@ -182,16 +220,17 @@ public class Enemy : MonoBehaviour {
        gameManager.AddScore(score);
         gameManager.canSpawn = false;
        // StartCoroutine(gameManager.NextWaveAnnouncer(5));
-        Destroy(this.gameObject);
+        Destroy(bc.gameObject);
     }
 
     IEnumerator EnemyShooting()
     {
-        enemyShootPoint = GameObject.Find("EnemyShootPoint");
-        Instantiate(enemySpellBullet, enemyShootPoint.transform.position, enemyShootPoint.transform.rotation);
+        EnemyDoDamage();
+        // enemyShootPoint = GameObject.Find("EnemyShootPoint");
+        //Instantiate(enemySpellBullet, enemyShootPoint.transform.position, enemyShootPoint.transform.rotation);
         alreadyShot = true;
        Debug.Log("Enemy had shot");                  
-       yield return new WaitForSeconds(3);
+       yield return new WaitForSeconds(1);
         alreadyShot = false;
     }
 

@@ -35,22 +35,28 @@ public class Spells : MonoBehaviour {
 
     public void GetName()
     {
-        if (this.gameObject.name == "FireSpell")
+        if (this.gameObject.name == "FireSpell1(Clone)")
         {
             spellTypes = SpellTypes.Fire;
+            Debug.Log("THIS SPELL IS::::  " + spellTypes);
         }
-        if (this.gameObject.name == "IceSpell")
+        if (this.gameObject.name == "IceSpell1(Clone)")
         {
             spellTypes = SpellTypes.Ice;
+            Debug.Log("THIS SPELL IS::::  " + spellTypes);
         }
-        if (this.gameObject.name == "LightingSpell")
+        if (this.gameObject.name == "LightingSpell1(Clone)")
         {
             spellTypes = SpellTypes.Lighting;
+            Debug.Log("THIS SPELL IS::::  " + spellTypes);
         }
-        if (this.gameObject.name == "WaterSpell")
+        if (this.gameObject.name == "WaterSpell1(Clone)")
         {
             spellTypes = SpellTypes.Water;
+            Debug.Log("THIS SPELL IS::::  " + spellTypes);
         }
+
+        
     }
 
     public void GetSpellType(int numberType)
@@ -72,14 +78,14 @@ public class Spells : MonoBehaviour {
         }
     }
 
-    public void MatchResistance()
+    public void MatchResistance(Enemy enemy)
     {
         if (enemy.resistType == Enemy.ResistanceTypes.Fire)
         {
             if (spellTypes == SpellTypes.Fire)
             {
                 enemy.EnemyGetDamage(10);
-                Destroy(this.gameObject);
+               // Destroy(this.gameObject);
             }
             else
             {
@@ -91,7 +97,7 @@ public class Spells : MonoBehaviour {
             if (spellTypes == SpellTypes.Ice)
             {
                 enemy.EnemyGetDamage(10);
-                Destroy(this.gameObject);
+                //Destroy(this.gameObject);
             }
             else
             {
@@ -103,7 +109,7 @@ public class Spells : MonoBehaviour {
             if (spellTypes == SpellTypes.Lighting)
             {
                 enemy.EnemyGetDamage(10);
-                Destroy(this.gameObject);
+                //Destroy(this.gameObject);
             }
             else
             {
@@ -115,7 +121,7 @@ public class Spells : MonoBehaviour {
             if (spellTypes == SpellTypes.Water)
             {
                 enemy.EnemyGetDamage(10);
-                Destroy(this.gameObject);
+               // Destroy(this.gameObject);
             }
             else
             {
@@ -130,20 +136,18 @@ public class Spells : MonoBehaviour {
     {
         if (collider.gameObject.tag == "Enemy")
         {
-            enemy = GameObject.Find("Enemy(Clone)").GetComponent<Enemy>();
-            Debug.Log("DETECTED");
-            MatchResistance();
+            Destroy(this.gameObject);
+           //collider.GetComponent<Enemy>
+            MatchResistance(collider.GetComponent<Enemy>());
         }
         if (collider.gameObject.tag != "Enemy")
         {
-            Destroy(this.gameObject);
+            Destroy(this.gameObject, 0.1f);
         }
         if (collider.gameObject.tag == "EnemyBoss")
         {
-            enemyBoss = GameObject.Find("EnemyBoss(Clone)").GetComponent<EnemyBoss>();
-            Debug.Log("DETECTED");
-            enemyBoss.EnemyGetDamage(8);
             Destroy(this.gameObject);
+            
         }
     }
 }

@@ -16,22 +16,24 @@ public class GameManager : MonoBehaviour {
     private GameObject player;
     [SerializeField]
     private GameObject portal;
+    [SerializeField]
+    private GameObject arrowToPortal;
 
     private bool alreadySpawned = true;
     private bool waveCleared = true;
 
     public Text waveTimeCountText;
     public Text currentWaveText;
-    private int seconds=5;
+    private int seconds=10;
 
     private int currentWave;
-    private float wavesCount;
-    private float hazardCount = 2;
+    private float wavesCount=1;
+    private float hazardCount = 10;
     private float hazardLeft;
     private float waveWait = 5;
-    private float spawnWait = 2;
-    private float startWait = 1;
-    private int timeUntilNextWave=5;
+    private float spawnWait = 5;
+    private float startWait = 3;
+    private int timeUntilNextWave=10;
 
     private float waveTimeCount;
 
@@ -40,23 +42,22 @@ public class GameManager : MonoBehaviour {
 
     public Text nextWaveInfo;
 
-    private Coroutine testEN;
-
-
     public bool canSpawn=false;
 
     // Use this for initialization
     void Start() {
+
         //enemy = Resources.Load("Prefabs/Enemy") as GameObject;
         //enemyBoss = Resources.Load("Prefabs/EnemyBoss") as GameObject;
         player = GameObject.Find("Player");
-        Debug.Log("Portals:" + portals.Length);
-        int RandomPortal = Random.Range(0, portals.Length);
-        // portal = GameObject.Find("Portal");
-        portal = portals[RandomPortal];
+       // Debug.Log("Portals:" + portals.Length);
+        //int RandomPortal = Random.Range(0, portals.Length);
+        //portal = portals[RandomPortal];
+        
         hazardLeft = hazardCount;
         StartCoroutine(NextWaveAnnouncer());
         //StartCoroutine(Spawn());      
+        //arrowToPortal.transform.position = portal.transform.position;
     }
 
     // Update is called once per frame
@@ -66,7 +67,7 @@ public class GameManager : MonoBehaviour {
         {
             StartCoroutine(NextWaveAnnouncer());
         }
-        NextWaveCheck();
+        //NextWaveCheck();
     }
 
     public void NextWaveCheck()
@@ -80,16 +81,30 @@ public class GameManager : MonoBehaviour {
             }
             currentWave += 1;
             seconds = 5;
-            Debug.Log("SECONDS:!!!! : " + seconds);
             currentWaveText.text = "Current Wave: " + currentWave;
-            Debug.Log("Next Wave is incoming...");
+            //Debug.Log("Next Wave is incoming...");
             TimeUpdate();
-            // InvokeRepeating("WaveTimeCount", 0, 1);
-            
-            if (wavesCount < 2)
+            int RandomPortal = Random.Range(0, portals.Length);
+            portal = portals[RandomPortal];
+            //arrowToPortal.transform.position = portal.transform.position;
+            arrowToPortal.transform.position = new Vector3(portal.transform.position.x, 20f, portal.transform.position.z);
+            //arrowToPortal.transform.position = player.transform.position;
+            if (wavesCount % 5 == 0)
+            {
+                waveCleared = true;
+                seconds = 5;
+                BossSpawn();
+                if (!IsInvoking("WaveTimeCount"))
+                {
+                    InvokeRepeating("WaveTimeCount", 0, 1);
+                }
+                //Debug.Log("Boss is coming");
+                alreadySpawned = false;
+            }
+            else
             {
                 if (alreadySpawned == true)
-                {                                  
+                {
                     waveCleared = true;
                     seconds = 5;
                     hazardLeft = hazardCount;
@@ -97,24 +112,39 @@ public class GameManager : MonoBehaviour {
                     if (!IsInvoking("WaveTimeCount"))
                     {
                         InvokeRepeating("WaveTimeCount", 0, 1);
-                    } 
+                    }
                     alreadySpawned = false;
                 }
             }
-            else if (wavesCount==2)
-            {
-                if (!IsInvoking("WaveTimeCount"))
-                {
-                    InvokeRepeating("WaveTimeCount", 0, 1);
-                }
-                Debug.Log("Boss is coming");
-                BossSpawn();
-            }                   
+            //if (wavesCount < 2)
+            //{
+            //    if (alreadySpawned == true)
+            //    {
+            //        waveCleared = true;
+            //        seconds = 5;
+            //        hazardLeft = hazardCount;
+            //        StartCoroutine(SpawnWaves());
+            //        if (!IsInvoking("WaveTimeCount"))
+            //        {
+            //            InvokeRepeating("WaveTimeCount", 0, 1);
+            //        }
+            //        alreadySpawned = false;
+            //    }
+            //}
+            //else if (wavesCount == 2)
+            //{
+            //    waveCleared = true;
+            //    seconds = 5;
+            //    BossSpawn();
+            //    if (!IsInvoking("WaveTimeCount"))
+            //    {
+            //        InvokeRepeating("WaveTimeCount", 0, 1);
+            //    }
+            //    Debug.Log("Boss is coming");
+            //    alreadySpawned = false;
+            //}
         }
-        else
-        {            
-            Debug.Log("Wave still existing");
-        }
+      
     }
 
 
@@ -154,13 +184,10 @@ public class GameManager : MonoBehaviour {
         {
             for (int i = 0; i < hazardCount; i++)
             {
-                
-                //Vector3 spawnPosition = new Vector3(portal.transform.position.x, portal.transform.position.y, portal.transform.position.z-3);
-                Vector3 spawnPosition = new Vector3(37,3,15);
+
                 Quaternion spawnRotation = Quaternion.identity;
                 enemySpawned=Instantiate(enemy, portal.transform.position, spawnRotation);
                 hazardLeft -= 1;
-                //Debug.Log("LEFT: " + hazardLeft);
                 yield return new WaitForSeconds(spawnWait);
                 
             }
@@ -169,13 +196,11 @@ public class GameManager : MonoBehaviour {
                
                 alreadySpawned = true;
                 wavesCount += 1;
-               
-                // Debug.Log("Waves Count: " + wavesCount);
             }
 
             else
             {
-                Debug.Log("THE FUK WAVE WAIT");
+                //Debug.Log("THE FUK WAVE WAIT");
                 yield return new WaitForSeconds(waveWait);
                 
             }
@@ -198,21 +223,14 @@ public class GameManager : MonoBehaviour {
 
     public void BossSpawn()
     {
-        Vector3 spawnPosition = new Vector3(37, 3, 15);
-        Quaternion spawnRotation = Quaternion.identity;
-        enemySpawned = Instantiate(enemyBoss, spawnPosition, spawnRotation);
-        wavesCount = 0;
+       
+            Quaternion spawnRotation = Quaternion.identity;
+            enemySpawned = Instantiate(enemyBoss, portal.transform.position, spawnRotation);
+            wavesCount = 1;
+            alreadySpawned = true;
+        
+        
     }
-
-    //public void EnemySpawn()
-    //{
-    //    float xCoordinate = Random.Range(30, 60);
-    //    float zCoordinate = Random.Range(30, 60);
-    //    enemySpawned = Instantiate(enemy, new Vector3(portal.transform.position.x, portal.transform.position.y, portal.transform.position.z), Quaternion.identity);
-    //    Debug.Log("Spawn Complete!");
-    //    Debug.Log(enemy.transform.position);
-    //    alreadySpawned = false;
-    //}
 
     private void TimeUpdate()
     {
@@ -232,7 +250,7 @@ public class GameManager : MonoBehaviour {
     public void WaveCleared()
     {           
             AddScore((int)waveTimeCount);
-            Debug.Log("Added TIME SCORE: " + waveTimeCount);
+            //Debug.Log("Added TIME SCORE: " + waveTimeCount);
     }
 
     public void UpdateScore()

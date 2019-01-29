@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyBoss : MonoBehaviour {
 
@@ -22,12 +23,13 @@ public class EnemyBoss : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        anim.GetComponent<Animator>();
+        anim = gameObject.GetComponent<Animator>();
         player = GameObject.Find("Player").GetComponent<Player>();
         playerTransform = GameObject.Find("Player").GetComponent<Transform>();
+
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         healthText = GameObject.Find("HealthText").GetComponent<TextMesh>();
-
+        Stats();
     }
 	
 	// Update is called once per frame
@@ -62,17 +64,27 @@ public class EnemyBoss : MonoBehaviour {
     }
 
 
-
-    public void EnemyDoDamage()
+    public void OnTriggerEnter(Collider collider)
     {
+        if (collider.gameObject.tag == "Spell")
+        {
+            int random = Random.Range(5, 10);
+            EnemyGetDamage(random);
+        }
+    }
 
+
+        public void EnemyDoDamage()
+    {
+         int dmg = Random.Range(5, 8) * level;
+        player.GetDamage(dmg);
     }
 
     public void EnemyMoving()
     {
-        //transform.LookAt(playerTransform);
+        transform.LookAt(playerTransform);
 
-        //transform.position += transform.position * moveSpeed * Time.deltaTime;
+        transform.position = new Vector3(transform.position.x, 0, transform.position.z);
         minDistance = Vector3.Distance(transform.position, playerTransform.position);
         if (minDistance > 4)
         {
@@ -81,6 +93,7 @@ public class EnemyBoss : MonoBehaviour {
 
 
             transform.position = Vector3.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
+            
         }
 
         else
@@ -100,17 +113,17 @@ public class EnemyBoss : MonoBehaviour {
         int score = Random.Range(1, 3) * level;
         gameManager.AddScore(score);
         gameManager.canSpawn = false;
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 
     IEnumerator EnemyShooting()
     {
-        
-       // enemyShootPoint = GameObject.Find("EnemyShootPoint");
+        EnemyDoDamage();
+        // enemyShootPoint = GameObject.Find("EnemyShootPoint");
         //Instantiate(enemySpellBullet, enemyShootPoint.transform.position, enemyShootPoint.transform.rotation);
-        //alreadyShot = true;
+        alreadyShot = true;
         Debug.Log("Enemy had shot");
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1);
         alreadyShot = false;
     }
 }

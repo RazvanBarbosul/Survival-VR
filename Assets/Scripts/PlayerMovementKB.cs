@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovementKB : MonoBehaviour {
 
@@ -11,6 +12,8 @@ public class PlayerMovementKB : MonoBehaviour {
     private Vector3 moveDirection = Vector3.zero;
 
     private CharacterController playerController;
+
+
     
     // Use this for initialization
     void Start () {
@@ -19,8 +22,8 @@ public class PlayerMovementKB : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        PlayerMovement();
-        // Controller();
+        //PlayerMovement();
+         Controller();
 
     }
 
@@ -44,8 +47,8 @@ public class PlayerMovementKB : MonoBehaviour {
             moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             moveDirection = transform.TransformDirection(moveDirection);
             moveDirection *= speed;
-            if (Input.GetButton("Jump"))
-                moveDirection.y = jumpSpeed;
+           // if (Input.GetButton("Jump"))
+               // moveDirection.y = jumpSpeed;
 
         }
         moveDirection.y -= gravity * Time.deltaTime;

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour {
 
 
 
     private int health;
-    private int maxHealth=5;
+    private int maxHealth=100;
     private int powerMax = 100;
     private int currentPower;
     private int powerCost = 1;
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour {
     public Image healthImage;
     public Text healthPercentage;
 
+    public Text gameOverText;
 
     public GameObject shootPoint;
 
@@ -37,6 +39,9 @@ public class Player : MonoBehaviour {
     private GameObject iceSpell;
     private GameObject lightingSpell;
     private GameObject waterSpell;
+
+    [SerializeField]
+    private Light Spotligt;
 
     public float range = 0.1f;
     Ray ray;
@@ -62,19 +67,20 @@ public class Player : MonoBehaviour {
 
     public void LoadAbilites()
     {
-        fireSpell = Resources.Load("Prefabs/FireSpell") as GameObject;
+        fireSpell = Resources.Load("Prefabs/FireSpell1") as GameObject;
 
-        iceSpell = Resources.Load("Prefabs/IceSpell") as GameObject;
+        iceSpell = Resources.Load("Prefabs/IceSpell1") as GameObject;
 
-        lightingSpell = Resources.Load("Prefabs/LightingSpell") as GameObject;
+        lightingSpell = Resources.Load("Prefabs/LightingSpell1") as GameObject;
 
-        waterSpell = Resources.Load("Prefabs/WaterSpell") as GameObject;
+        waterSpell = Resources.Load("Prefabs/WaterSpell1") as GameObject;
 
     }
 
     public void FireAbility()
     {
         // cost = powerCost;
+       
         
           currentPower -= powerCost;
 
@@ -124,28 +130,53 @@ public class Player : MonoBehaviour {
 
     public void AbilitesUses()
     {
-        ShootDirection();
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (currentPower >powerCost)
         {
             ShootDirection();
-            FireAbility();
+
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetButtonDown("Fire1"))
+            {
+                ShootDirection();
+                FireAbility();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetButtonDown("Fire2"))
+            {
+                ShootDirection();
+                IceAbility();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetButtonDown("Fire3"))
+            {
+                ShootDirection();
+                LightingAbility();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetButtonDown("Fire4"))
+            {
+                ShootDirection();
+                WaterAbility();
+            }
+            //if (Input.GetButtonDown("Fire1"))
+            //{
+            //    ShootDirection();
+            //    FireAbility();
+            //}
+            //if (Input.GetButtonDown("Fire2"))
+            //{
+            //    ShootDirection();
+            //    IceAbility();
+            //}
+            //if (Input.GetButtonDown("Fire3"))
+            //{
+            //    ShootDirection();
+            //    LightingAbility();
+            //}
+            //if (Input.GetButtonDown("Fire4"))
+            //{
+            //    ShootDirection();
+            //    WaterAbility();
+            //}
         }
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            ShootDirection();
-            IceAbility();
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            ShootDirection();
-            LightingAbility();
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ShootDirection();
-            WaterAbility();
-        }
+       
     }
 
     public void PowerCost()
@@ -165,6 +196,10 @@ public class Player : MonoBehaviour {
             powerRegen = true;
             StartCoroutine(PowerRegen());
         }
+        if (currentPower <= 0)
+        {
+            currentPower = 0;
+        }
         powerImage.fillAmount = (float)currentPower / (float)powerMax;       
         PowerPercentage.text = currentPower.ToString();
     }
@@ -173,9 +208,19 @@ public class Player : MonoBehaviour {
     {
         healthImage.fillAmount = (float)health / (float)maxHealth;
         healthPercentage.text = health.ToString();
+
+        if (health <= 2)
+        {
+            Spotligt.color = Color.red;
+        }
+        else
+        {
+            Spotligt.color = Color.white;
+        }
+
         if (health <= 0)
         {
-            GameOver();
+            StartCoroutine(GameOver());
         }
     }
 
@@ -223,11 +268,7 @@ public class Player : MonoBehaviour {
         Debug.Log("ACTUAL XP: " + xp);
     }
 
-    public void GameOver()
-    {
-        Time.fixedDeltaTime = 0;
-        Debug.Log("GameOver");
-    }
+ 
 
     IEnumerator PowerRegen()
     {
@@ -242,5 +283,13 @@ public class Player : MonoBehaviour {
         
         yield return new WaitForSeconds(2);
         LevelUpText.text = " ";
+    }
+
+    IEnumerator GameOver()
+    {
+        gameOverText.text = "GAME OVER";
+        Time.fixedDeltaTime = 0;
+        yield return new WaitForSeconds(3);
+        SceneManager.LoadScene("Gameplay");
     }
 }
